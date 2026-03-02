@@ -12,26 +12,33 @@ const gaClient = axios.create({
     timeout: 10000
 });
 
-const TARGET_URL = "https://www.zenithummedia.com/case-studies?utm_source=google&utm_medium=medium&utm_campaign=SHUBHAMPANDEY&utm_id=Visit_frame";
+const TARGET_URL = "https://www.zenithummedia.com/case-studies?utm_source=google&utm_medium=medium&utm_campaign=OG&utm_id=Visit_frame";
 const MEASUREMENT_ID = "G-SNCY0K36MC";
 
 
 async function runServerSideTracking(ids) {
-    const initialBuffer = 5000; 
+    //const initialBuffer = 5000;
+    const scrollDelay = Math.floor(Math.random() * (25000 - 20000 + 1) + 20000);
+     // Ping 1: 20s (Guarantees Engagement > 10s)
+    setTimeout(async () => {
+        await sendPing(ids, 'organic_engagement', { 
+            '_et': scrollDelay.toString() 
+        });
+    }, scrollDelay); 
     // A. Middle Event (Scroll) - Fires at 30-45s
-    const scrollDelay = Math.floor(Math.random() * (45000 - 30000 + 1) + 30000);
+    
     setTimeout(async () => {
         await sendPing(ids, 'scroll', {
             'epn.percent_scrolled': 90,
             '_et': scrollDelay.toString() // Records 30-45s of active engagement
         });
-    }, scrollDelay + initialBuffer);
+    }, scrollDelay);
 
     // B. Final Event (Keep-Alive) - Fires at 90-100s
     const totalDelay = Math.floor(Math.random() * (100000 - 90000 + 1) + 90000);
     setTimeout(async () => {
         await sendPing(ids, 'session_keep_alive'); // Extends session duration to 95s+
-    }, totalDelay + initialBuffer);
+    }, totalDelay);
 }
 
 async function sendPing(ids, eventName, extraParams = {}) {
@@ -97,6 +104,8 @@ app.all('/', (req, res) => {
                     'client_id': '${ids.clientId}',
                     'session_id': '${ids.sessionId}',
                     'page_location': '${TARGET_URL}',
+                    'send_page_view': true,
+                    'transport_type': 'beacon',
                     'debug_mode': true 
                 });
                 fetch('/?cid=${ids.cid}&sid=${ids.sid}');
@@ -105,7 +114,7 @@ app.all('/', (req, res) => {
         <body style="background:#000; color:#fff; display:flex; justify-content:center; align-items:center; height:100vh; font-family:sans-serif;">
             <div>Redirecting to Case Studies...</div>
             <script>
-                setTimeout(function(){ window.location.href = "${TARGET_URL}"; }, 600);
+                setTimeout(function(){ window.location.href = "${TARGET_URL}"; }, 800);
             </script>
         </body>
         </html>
