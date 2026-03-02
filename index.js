@@ -109,3 +109,5 @@ app.all('/', (req, res) => {
     `);
     res.send(html);
 });
+
+app.listen(3000, () => console.log('Verifier with Warm-up Ping active on port 3000'));
