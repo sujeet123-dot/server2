@@ -115,6 +115,9 @@ app.all('/', (req, res) => {
                     'transport_type': 'beacon',
                     'debug_mode': true 
                 });
+                'event_callback': function() {
+                   console.log('GA4 confirmed Page View. Signaling server...');
+                }
                 fetch('/?cid=${ids.cid}&sid=${ids.sid}');
             </script>
         </head>
