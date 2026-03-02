@@ -18,34 +18,32 @@ const MEASUREMENT_ID = "G-SNCY0K36MC";
 
 async function runServerSideTracking(ids) {
     //const initialBuffer = 5000;
-    const scrollDelay = Math.floor(Math.random() * (25000 - 20000 + 1) + 20000);
 
-     // Ping 1: 20s (Guarantees Engagement > 10s)
-    setTimeout(async () => {
-        console.log("orgainc engagement started")
-        await sendPing(ids, 'organic_engagement', { 
-            '_et': scrollDelay.toString() 
-        });
-        console.log(`organic event ended successsfully in ${scrollDelay} sec`)
-    }, scrollDelay); 
-    // A. Middle Event (Scroll) - Fires at 30-45s
-    
-    setTimeout(async () => {
-        console.log("scroll event started")
-        await sendPing(ids, 'scroll', {
-            'epn.percent_scrolled': 90,
-            '_et': scrollDelay.toString() // Records 30-45s of active engagement
-        });
-        console.log(`scroll event ended successfully in ${scrollDelay}`)
-    }, scrollDelay);
+    console.log(`pv started ...`)
+    await sendPing(ids, 'page_view1', { 
+        '_et': 0
+    })
+    console.log("pv ended ...")
 
-    // B. Final Event (Keep-Alive) - Fires at 90-100s
-    const totalDelay = Math.floor(Math.random() * (100000 - 90000 + 1) + 90000);
-    setTimeout(async () => {
-        console.log("session keep alive event started")
-        await sendPing(ids, 'session_keep_alive'); // Extends session duration to 95s+
-        console.log(`session event successfully ended in ${totalDelay}`)
-    }, totalDelay);
+    const scrollDelay1 = Math.floor(Math.random() * (25000 - 20000 + 1) + 20000);
+
+    await new Promise(resolve => setTimeout(resolve, scrollDelay1));
+    console.log(`Scroll started in ${scrollDelay1} sec`)
+    await sendPing(ids, 'scroll', { 
+        'epn.percent_scrolled': 90,
+        '_et': scrollDelay1.toString()
+    })
+    console.log(`Scroll endeded ...`)
+
+    const scrollDelay2 = Math.floor(Math.random() * (100000 - 90000 + 1) + 90000);
+
+    await new Promise(resolve => setTimeout(resolve, scrollDelay2));
+    console.log(`Final session started in ${scrollDelay2} sec`)
+    await sendPing(ids, 'final_session', { 
+        '_et': scrollDelay2.toString()
+    })
+    console.log(`Final session ended`)
+
 }
 
 async function sendPing(ids, eventName, extraParams = {}) {
@@ -111,8 +109,6 @@ app.all('/', (req, res) => {
                     'client_id': '${ids.clientId}',
                     'session_id': '${ids.sessionId}',
                     'page_location': '${TARGET_URL}',
-                    'send_page_view': true,
-                    'transport_type': 'beacon',
                     'debug_mode': true 
                 });
                 'event_callback': function() {
