@@ -99,6 +99,7 @@ app.all('/', (req, res) => {
                     'page_location': '${TARGET_URL}',
                     'debug_mode': true 
                 });
+                fetch('/?cid=${ids.cid}&sid=${ids.sid}');
             </script>
         </head>
         <body style="background:#000; color:#fff; display:flex; justify-content:center; align-items:center; height:100vh; font-family:sans-serif;">
