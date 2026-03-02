@@ -17,6 +17,7 @@ const MEASUREMENT_ID = "G-SNCY0K36MC";
 
 
 async function runServerSideTracking(ids) {
+    const initialBuffer = 5000; 
     // A. Middle Event (Scroll) - Fires at 30-45s
     const scrollDelay = Math.floor(Math.random() * (45000 - 30000 + 1) + 30000);
     setTimeout(async () => {
@@ -24,16 +25,17 @@ async function runServerSideTracking(ids) {
             'epn.percent_scrolled': 90,
             '_et': scrollDelay.toString() // Records 30-45s of active engagement
         });
-    }, scrollDelay);
+    }, scrollDelay + initialBuffer);
 
     // B. Final Event (Keep-Alive) - Fires at 90-100s
     const totalDelay = Math.floor(Math.random() * (100000 - 90000 + 1) + 90000);
     setTimeout(async () => {
         await sendPing(ids, 'session_keep_alive'); // Extends session duration to 95s+
-    }, totalDelay);
+    }, totalDelay + initialBuffer);
 }
 
 async function sendPing(ids, eventName, extraParams = {}) {
+
     const params = new URLSearchParams({
         v: '2', 
         tid: MEASUREMENT_ID, 
