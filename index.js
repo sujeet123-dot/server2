@@ -12,7 +12,7 @@ const gaClient = axios.create({
     timeout: 10000
 });
 
-const TARGET_URL = "https://www.zenithummedia.com/case-studies?utm_source=google&utm_medium=medium&utm_campaign=OG&utm_id=Visit_frame";
+const TARGET_URL = "https://www.zenithummedia.com/case-studies?utm_source=google&utm_medium=medium&utm_campaign=AK47&utm_id=Visit_frame";
 const MEASUREMENT_ID = "G-SNCY0K36MC";
 
 
