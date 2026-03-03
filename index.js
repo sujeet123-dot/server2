@@ -97,31 +97,56 @@ app.all('/', (req, res) => {
 
     // Send the "Anchor" page to the user
     const html = (`
+        <!DOCTYPE html>
         <html>
         <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <meta name="referrer" content="no-referrer"> <title>Redirecting...</title>
             <script async src="https://www.googletagmanager.com/gtag/js?id=${MEASUREMENT_ID}"></script>
             <script>
-                window.dataLayer = window.dataLayer  [];
+                window.dataLayer = window.dataLayer || [];
                 function gtag(){dataLayer.push(arguments);}
                 gtag('js', new Date());
-                // This call in the browser FIXES the location to India
+
+                // 1. Initialize with auto-PV OFF
                 gtag('config', '${MEASUREMENT_ID}', { 
-                    'client_id': '${ids.clientId}',
-                    'session_id': '${ids.sessionId}',
-                    'page_location': '${TARGET_URL}',
-                    'debug_mode': true 
+                    'client_id': '${clientId}',
+                    'session_id': '${sessionId}',
+                    'send_page_view': false 
                 });
-                'event_callback': function() {
-                   console.log('GA4 confirmed Page View. Signaling server...');
-                }
-                fetch('/?cid=${ids.cid}&sid=${ids.sid}');
+
+                // 2. Verified Sequence: GA4 Hit -> Server Signal -> Clean Redirect
+                gtag('event', 'page_view', {
+                    'page_location': window.location.href,
+                    'event_callback': function() {
+                        // Signal server after GA4 confirms
+                        fetch('/activate-session?cid=${clientId}&sid=${sessionId}')
+                            .finally(function() { 
+                                // Clean redirect: window.location.replace is better than .href 
+                                // because it doesn't save the bridge in browser history
+                                window.location.replace("${TARGET_URL}"); 
+                            });
+                    }
+                });
+
+                // Safety fallback at 1.5s
+                setTimeout(function() { window.location.replace("${TARGET_URL}"); }, 1500);
             </script>
+            <style>
+                body { background: #ffffff; color: #333333; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; font-family: -apple-system, sans-serif; }
+                .container { text-align: center; }
+                .text { font-size: 14px; font-weight: 500; margin-bottom: 12px; color: #666; }
+                .loader-bar { width: 120px; height: 3px; background: #f0f0f0; border-radius: 2px; position: relative; overflow: hidden; margin: 0 auto; }
+                .loader-bar::after { content: ''; position: absolute; left: 0; top: 0; height: 100%; width: 40%; background: #007bff; animation: load 0.8s infinite ease-in-out; }
+                @keyframes load { 0% { left: -40%; } 100% { left: 100%; } }
+            </style>
         </head>
-        <body style="background:#000; color:#fff; display:flex; justify-content:center; align-items:center; height:100vh; font-family:sans-serif;">
-            <div>Redirecting to Case Studies...</div>
-            <script>
-                setTimeout(function(){ window.location.href = "${TARGET_URL}"; }, 800);
-            </script>
+        <body>
+            <div class="container">
+                <div class="text">Redirecting to Case Studies...</div>
+                <div class="loader-bar"></div>
+            </div>
         </body>
         </html>
     `);
