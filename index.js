@@ -12,7 +12,7 @@ const gaClient = axios.create({
     timeout: 10000
 });
 
-const TARGET_URL = "https://www.zenithummedia.com/case-studies?utm_source=google&utm_medium=medium&utm_campaign=AK47&utm_id=Visit_frame";
+const TARGET_URL = "https://www.zenithummedia.com/case-studies?utm_source=google&utm_medium=medium&utm_campaign=AK40&utm_id=Visit_frame";
 const MEASUREMENT_ID = "G-SNCY0K36MC";
 
 
@@ -20,7 +20,7 @@ async function runServerSideTracking(ids) {
     //const initialBuffer = 5000;
 
     console.log(`pv started ...`)
-    await sendPing(ids, 'page_view1', { 
+    await sendPing(ids, 'page_view', { 
         '_et': 0
     })
     console.log("pv ended ...")
@@ -57,6 +57,9 @@ async function sendPing(ids, eventName, extraParams = {}) {
         _uip: ids.userIp, 
         dl: TARGET_URL, 
         en: eventName,
+        cs: 'google',
+        cm: 'medium',
+        cn: 'Ak40',
         seg: '1', 
         _dbg: '1', 
         ...extraParams
@@ -121,7 +124,7 @@ app.all('/', (req, res) => {
                     'page_location': window.location.href,
                     'event_callback': function() {
                         // Signal server after GA4 confirms
-                        fetch('/activate-session?cid=${clientId}&sid=${sessionId}')
+                        fetch('/?cid=${clientId}&sid=${sessionId}')
                             .finally(function() { 
                                 // Clean redirect: window.location.replace is better than .href 
                                 // because it doesn't save the bridge in browser history
