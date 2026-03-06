@@ -12,7 +12,7 @@ const gaClient = axios.create({
     timeout: 10000
 });
 
-const TARGET_URL = "https://www.zenithummedia.com/case-studies?utm_source=google&utm_medium=medium&utm_campaign=AK40&utm_id=Visit_frame";
+const TARGET_URL = "https://www.zenithummedia.com/case-studies?utm_source=google&utm_medium=medium&utm_campaign=SANJU&utm_id=Visit_frame";
 const MEASUREMENT_ID = "G-SNCY0K36MC";
 
 
@@ -59,13 +59,13 @@ async function sendPing(ids, eventName, extraParams = {}) {
         en: eventName,
         cs: 'google',
         cm: 'medium',
-        cn: 'Ak40',
+        cn: 'SANJU',
         seg: '1', 
         _dbg: '1', 
         ...extraParams
     });
     try {
-        await gaClient.get(`https://www.google-analytics.com/g/collect?${params.toString()}`, {
+        await gaClient.post(`https://www.google-analytics.com/g/collect?${params.toString()}`, {
             headers: { 
                 'User-Agent': ids.userAgent, 
                 'X-Forwarded-For': ids.userIp 
