@@ -12,7 +12,7 @@ const gaClient = axios.create({
     timeout: 10000
 });
 
-const TARGET_URL = "https://www.zenithummedia.com/case-studies?utm_source=google&utm_medium=medium&utm_campaign=SANJU&utm_id=Visit_frame";
+const TARGET_URL = "https://www.zenithummedia.com/case-studies?utm_source=google&utm_medium=medium&utm_campaign=RUBENCE&utm_id=Visit_frame";
 const MEASUREMENT_ID = "G-SNCY0K36MC";
 
 
@@ -39,9 +39,7 @@ async function runServerSideTracking(ids) {
 
     await new Promise(resolve => setTimeout(resolve, scrollDelay2));
     console.log(`Final session started in ${scrollDelay2} sec`)
-    await sendPing(ids, 'final_session', { 
-        '_et': scrollDelay2.toString()
-    })
+    await sendPing(ids, 'final_session')
     console.log(`Final session ended`)
 
 }
@@ -59,7 +57,7 @@ async function sendPing(ids, eventName, extraParams = {}) {
         en: eventName,
         cs: 'google',
         cm: 'medium',
-        cn: 'SANJU',
+        cn: 'RUBENCE',
         seg: '1', 
         _dbg: '1', 
         ...extraParams
@@ -96,7 +94,13 @@ app.all('/', (req, res) => {
     };
 
     // Start server-side pings in background
-    runServerSideTracking(ids);
+    // runServerSideTracking(ids);
+
+    // 1. If IDs are present in query, adopt them and respond
+    if (req.query.cid && req.query.sid) {
+        runServerSideTracking({ clientId: req.query.cid, sessionId: req.query.sid, userIp, userAgent });
+        return res.json({ status: 'success' });
+    }
 
     // Send the "Anchor" page to the user
     const html = (`
