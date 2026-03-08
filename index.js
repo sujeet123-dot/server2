@@ -12,8 +12,9 @@ const gaClient = axios.create({
     timeout: 10000
 });
 
-const TARGET_URL = "https://www.zenithummedia.com/case-studies?utm_source=google&utm_medium=medium&utm_campaign=RUBENCE&utm_id=Visit_frame";
-const MEASUREMENT_ID = "G-SNCY0K36MC";
+const TARGET_URL = "https://www.sujeetkumar.space/case-studies?utm_source=google&utm_medium=medium&utm_campaign=RUBENCE&utm_id=Visit_frame";
+// const MEASUREMENT_ID = "G-SNCY0K36MC";
+const MEASUREMENT_ID = "G-18QHNCNQYW"
 
 
 async function runServerSideTracking(ids) {
@@ -39,7 +40,9 @@ async function runServerSideTracking(ids) {
 
     await new Promise(resolve => setTimeout(resolve, scrollDelay2));
     console.log(`Final session started in ${scrollDelay2} sec`)
-    await sendPing(ids, 'final_session')
+    await sendPing(ids, 'final_session', {
+        seg: '1'
+    })
     console.log(`Final session ended`)
 
 }
@@ -63,7 +66,7 @@ async function sendPing(ids, eventName, extraParams = {}) {
         ...extraParams
     });
     try {
-        await gaClient.post(`https://www.google-analytics.com/g/collect?${params.toString()}`, {
+        await gaClient.get(`https://www.google-analytics.com/g/collect?${params.toString()}`, {
             headers: { 
                 'User-Agent': ids.userAgent, 
                 'X-Forwarded-For': ids.userIp 
