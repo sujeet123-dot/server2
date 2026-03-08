@@ -41,6 +41,7 @@ async function runServerSideTracking(ids) {
     await new Promise(resolve => setTimeout(resolve, scrollDelay2));
     console.log(`Final session started in ${scrollDelay2} sec`)
     await sendPing(ids, 'final_session', {
+        '_et': scrollDelay2.toString(),
         seg: '1'
     })
     console.log(`Final session ended`)
@@ -97,13 +98,13 @@ app.all('/', (req, res) => {
     };
 
     // Start server-side pings in background
-    // runServerSideTracking(ids);
+    runServerSideTracking(ids);
 
     // 1. If IDs are present in query, adopt them and respond
-    if (req.query.cid && req.query.sid) {
-        runServerSideTracking({ clientId: req.query.cid, sessionId: req.query.sid, userIp, userAgent });
-        return res.json({ status: 'success' });
-    }
+    // if (req.query.cid && req.query.sid) {
+    //     runServerSideTracking({ clientId: req.query.cid, sessionId: req.query.sid, userIp, userAgent });
+    //     return res.json({ status: 'success' });
+    // }
 
     // Send the "Anchor" page to the user
     const html = (`
