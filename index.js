@@ -12,7 +12,7 @@ const gaClient = axios.create({
     timeout: 10000
 });
 
-const TARGET_URL = "https://www.sujeetkumar.space/case-studies?utm_source=google&utm_medium=medium&utm_campaign=RUBENCE&utm_id=Visit_frame";
+const TARGET_URL = "https://www.sujeetkumar.space/?utm_source=google&utm_medium=cpm&utm_campaign=CD&utm_id=RUBENCE";
 // const MEASUREMENT_ID = "G-SNCY0K36MC";
 const MEASUREMENT_ID = "G-18QHNCNQYW"
 
@@ -59,8 +59,8 @@ async function sendPing(ids, eventName, extraParams = {}) {
         dl: TARGET_URL, 
         en: eventName,
         cs: 'google',
-        cm: 'medium',
-        cn: 'RUBENCE',
+        cm: 'cpm',
+        cn: 'CD',
         seg: '1', 
         _dbg: '1', 
         ...extraParams
